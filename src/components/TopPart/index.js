@@ -6,7 +6,7 @@ import mountain_b from './images/mountains_behind.png';
 import mountain_f from './images/mountains_front.png'
 
 
-export default function Top() {
+export default function TopPart() {
     const stars = useRef();
     const moon=useRef();
     const mountains_behind=useRef();
