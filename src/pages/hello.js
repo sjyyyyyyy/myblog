@@ -7,9 +7,7 @@ export default function Hello() {
   return (
     <Layout title="Hello" description="Hello React Page">
 <Top />
-
   <Middle />
-
 <Bottom />
     </Layout>
   );
