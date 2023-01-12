@@ -7,14 +7,17 @@ import mountain_f from './images/mountains_front.png'
 
 
 export default function TopPart() {
+    const windowx=window?window:global
     const stars = useRef();
     const moon=useRef();
     const mountains_behind=useRef();
     const text=useRef();
     const btn=useRef();
     const mountains_front=useRef();
-    window.addEventListener('scroll', function(){
-      let value = window.scrollY;
+   
+   windowx.addEventListener('scroll', function(){
+      let value = windowx.scrollY;
+     
       stars.current.style.left = value * 0.25 + 'px'
       moon.current.style.top = value * 1.05 + 'px'
       mountains_behind.current.style.top = value * 0.5 + 'px'
