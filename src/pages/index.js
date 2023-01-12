@@ -1,11 +1,11 @@
-import React from 'react';
+// import React from 'react';
 // import clsx from 'clsx';
-import Link from '@docusaurus/Link';
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import Layout from '@theme/Layout';
+// import Link from '@docusaurus/Link';
+// import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+// import Layout from '@theme/Layout';
 // import HomepageFeatures from '@site/src/components/HomepageFeatures';
 
-import styles from './index.module.css';
+// import styles from './index.module.css';
 
 // function HomepageHeader() {
 //   const {siteConfig} = useDocusaurusContext();
@@ -26,18 +26,33 @@ import styles from './index.module.css';
 //   );
 // }
 
-export default function Home() {
-  const {siteConfig} = useDocusaurusContext();
-  return (
-    <Layout
-      title={`Hello from ${siteConfig.title}`}
-      description="Description will go into a meta tag in <head />">
+// export default function Home() {
+//   const {siteConfig} = useDocusaurusContext();
+//   return (
+//     <Layout
+//       title={`Hello from ${siteConfig.title}`}
+//       description="Description will go into a meta tag in <head />">
      
      
       {/* <HomepageHeader /> */}
       {/* <main>
         <HomepageFeatures />
       </main> */}
+    {/* </Layout>
+  );
+} */}
+
+import React from 'react';
+import Layout from '@theme/Layout';
+// import Top from '@site/src/components/TopPart';
+// import Bottom from '@site/src/components/Bottom';
+// import Middle from '@site/src/components/Middle';
+export default function Home() {
+  return (
+    <Layout title="Hello" description="Hello React Page">
+{/* <Top />
+  <Middle />
+<Bottom /> */}
     </Layout>
   );
 }

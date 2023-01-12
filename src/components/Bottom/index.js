@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef,useEffect } from 'react';
 import styles from './styles.module.css';
 import cloud1 from './images/cloud1.png'
 import cloud2 from './images/cloud2.png'
@@ -7,7 +7,7 @@ import cloud4 from './images/cloud4.png'
 import cloud5 from './images/cloud5.png'
 import bg from './images/bg.jpg'
 export default function Bottom() {
-    const windowx=window?window:global
+    const windowx = window ? window : global
     let banner = {
         position: 'relative',
         width: '100%',
@@ -20,12 +20,13 @@ export default function Bottom() {
         alignItems: 'center'
     }
     const text = useRef()
-   
-    windowx.addEventListener('scroll', function () {
-   
-        let value = windowx.scrollY;
-        text.current.style.marginBotton = value * 2 + 'px';
-    });
+    useEffect(() => {
+        windowx.addEventListener('scroll', function () {
+            let value = windowx.scrollY;
+            text.current.style.marginBotton = value * 2 + 'px';
+        });
+    }, []);
+
     return (
         <div className={styles.all}>
             <section className={styles.section}>

@@ -14,8 +14,8 @@ export default function TopPart() {
     const text=useRef();
     const btn=useRef();
     const mountains_front=useRef();
-   
-   windowx.addEventListener('scroll', function(){
+   useEffect(()=>{
+     windowx.addEventListener('scroll', function(){
       let value = windowx.scrollY;
      
       stars.current.style.left = value * 0.25 + 'px'
@@ -26,6 +26,8 @@ export default function TopPart() {
       text.current.style.marginTop = value * 1.5 + 'px'
       btn.current.style.marginTop = value * 1.5 + 'px'
     })
+   },[])
+  
     return (
         <div className={styles.all}>
             <section className={styles.section}>
