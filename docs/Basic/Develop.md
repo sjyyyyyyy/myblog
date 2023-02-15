@@ -6,6 +6,103 @@ sidebar_position: 5
 
 实用方法
 
+## 移动端适配
+
+1. viewport适配
+
+通过设置 initial-scale , 将所有设备布局视口的宽度调整为设计图的宽度。
+
+```js
+//获取meta节点
+var metaNode = document.querySelector('meta[name=viewport]');
+
+//定义设计稿宽度为375
+var designWidth = 375;
+
+//计算当前屏幕的宽度与设计稿比例
+var scale = document.documentElement.clientWidth/designWidth;
+
+//通过设置meta元素中content的initial-scale值达到移动端适配
+meta.content="initial-scale="+scale+",minimum-scale="+scale+",maximum-scale="+scale+",user-scalable=no";
+```
+
+2. rem+vw
+
+vw表示1%的屏幕宽度，若设计稿是750px，屏幕一共是100vw对应750px，那么1px就是0.1333vw，方便计算取html为100px，html{font-size:13.333vw}，防止字体过大可用媒体查询控制。
+
+或将 html 节点的 font-size 设置为页面clientWidth(布局视口)的 1/10，即 1rem 就等于页面布局视口的 1/10，这就意味着我们后面使用的 rem 都是按照页面比例来计算的。
+
+```js
+var clientWidth = docEl.clientWidth;//获取设备的宽度
+            if (!clientWidth) return;
+            if (clientWidth >= 750) {//宽度>750 平板 或者桌面 
+                docEl.style.fontSize = '100px';//根元素 
+            } else {//移动端的适配 
+                //设置：html根元素大小   100设计稿的html大小  750设计稿（根据设计稿变化）
+                //测试设计稿大小：测量的值px  px转rem  测量的px/100=?rem  直接css里面写?rem
+                docEl.style.fontSize = 100 * (clientWidth / 750) + 'px';
+            }
+```
+
+3. 媒体查询@media
+
+## 渲染多条数据
+
+:::tip
+1. requestAnimationFrame()：与屏幕刷新次数相匹配，不会丢帧，setTimeout可能会与之不匹配，其次窗口未激活时，动画将停止，节省资源，浏览器提供的api，优化更流畅
+2. 虚拟节点减少重排
+
+```js
+<script>
+  const total = 10000,
+  // 每次处理20条
+  each = 20,
+  // 需要处理次数
+  needTimes = Math.ceil(total / each),
+  content = document.querySelector('.list')
+  // 当前处理次数
+  let currentTime = 0
+  function add() {
+     // 创建一个虚拟的节点对象
+     const fragment = document.createDocumentFragment()
+     // 分批处理
+     for (let i = 0; i < each; i++) {
+       const li = document.createElement('li')
+       li.innerText = Math.floor(i+currentTime*each)
+       fragment.appendChild(li)
+     }
+     把虚拟的节点对象添加到主节点中
+     content.appendChild(fragment)
+     currentTime++;
+     // 循环处理
+     if (currentTime < needTimes) window.requestAnimationFrame(add);
+  }
+  window.requestAnimationFrame(add)
+</script>
+```
+:::
+
+## 埋点
+
+> 为了搜集产品数据，上报相关行为数据，相关人员以数据为依据进行分析产品在用户端的使用情况
+
+## 国际化
+
+:::tip
+```js
+//1.
+import { useIntl } from "react-intl";
+//2.
+export default {
+ 'pages.welcome.alertMessage': '更快更强的重型组件，已经发布。',
+};
+//3.
+const { formatMessage } = useIntl();
+    {formatMessage({ id: "pages.welcome.alertMessage" })}
+```
+:::
+
+
 ## 模式
 
 ### 单例模式
@@ -42,11 +139,11 @@ sidebar_position: 5
 
 ## 异常监控
 
-通常的办法是使⽤window.onerror拦截报错。该⽅法能拦截到⼤ 部分的详细报错信息，但是也有例外：
+通常的办法是使⽤window.onerror拦截报错。该方法能拦截到大部分的详细报错信息，但是也有例外：
 - 对于跨域的代码运⾏错误会显示 Script error . 对于这种情况我们需要给 script 标签 添加 crossorigin 属性 
-- 对于某些浏览器可能不会显示调⽤栈信息，这种情况可以通过arguments.callee.caller 来做栈递归 对于异步代码来说，可以使⽤ catch 的⽅式捕获错误。⽐如Promise可以直接使⽤catch 函数， async await 可以使⽤ try catch但是要注意线上运⾏的代码都是压缩过的，需要在打包时⽣成 sourceMap ⽂件便于debug
+- 对于某些浏览器可能不会显示调⽤栈信息，这种情况可以通过arguments.callee.caller 来做栈递归 对于异步代码来说，可以使⽤ catch 的⽅式捕获错误。⽐如Promise可以直接使⽤catch 函数， async await 可以使⽤ try catch
 
-对于捕获的错误需要上传给服务器，通常可以通过 img 标签的 src 发起⼀个请求。 另外接⼝异常就相对来说简单了，可以列举出出错的状态码。⼀旦出现此类的状态码就可 以⽴即上报出错。
+对于捕获的错误需要上传给服务器，通常可以通过 img 标签的 src 发起⼀个请求。 另外接⼝异常就相对来说简单了，可以列举出出错的状态码。⼀旦出现此类的状态码就可以礼金上报出错。
 
 ## 性能优化
 
@@ -163,79 +260,27 @@ img.offsetTop < window.innerHeight + document.body.scrollTop;
 
 ## label
 
-```html title="常见用法"
-//解决不同浏览器原生button样式不同的问题
-<input type="button" id="btn">
-<label for="btn">Button</label>
-<style>
-input[type='button'] {
-  display: none;
-}
-label {
-  display: inline-block;
-  padding: 10px 20px;
-  background: #456;
-  color: #fff;
-  cursor: pointer;
-  box-shadow: 2px 2px 4px 0 rgba(0,0,0,.3);
-  border-radius: 2px;
-}
-</style>
-//结合checkbox、radio表单元素实现纯CSS状态切换，这样的实例就太多了。比如控制CSS动画播放和停止。
-<input type="checkbox" id="controller">
-<label class="icon" for="controller">
-  <div class="play"></div>
-  <div class="pause"></div>
-</label>
-<div class="animation"></div>
+适用于所有类型的input标签，select标签以及textarea标签
 
-<style>
-...
-#controller:checked ~ .animation {
-  animation-play-state: paused;
-}
-...
-</style>
-//input的focus事件会触发锚点定位，我们可以利用label当触发器实现选项卡切换效果。
-<div class="box">
-  <div class="list"><input id="one" readonly>1</div>
-  <div class="list"><input id="two" readonly>2</div>
-  <div class="list"><input id="three" readonly>3</div>
-  <div class="list"><input id="four" readonly>4</div>
-</div>
-<div class="link">
-  <label class="click" for="one">1</label>
-  <label class="click" for="two">2</label>
-  <label class="click" for="three">3</label>
-  <label class="click" for="four">4</label>
-</div>
-<style>
-.box {
-  width: 20em;
-  height: 10em;
-  border: 1px solid #ddd;
-  overflow: hidden;
-}
-.list {
-  height: 100%;
-  background: #ddd;
-  text-align: center;
-  position: relative;
-}
-.list > input { 
-  position: absolute; top:0; 
-  height: 100%; width: 1px;
-  border:0; padding: 0; margin: 0;
-  clip: rect(0 0 0 0);
-}
-</style>
+- 关联方式
+
+1. 通过label标签的for属性与指定表单元素的id绑定来实现关联表单
+2. 直接将表单控件放到label标签内，这种情况下，label标签只能包含一个表单元素，如果包含多个只对第一个有效
+```html
+<label >点击获取input焦点
+    <input type="text">
+</label>
 ```
 
 ## 等高布局
 
-1. 父元素overflow：hidden,子元素先浮动，然后设置margin-bottom:-9999px;padding-bottom: 9999px; 
+1. 父元素overflow：hidden,子元素先浮动，然后设置margin-bottom:-9999px;padding-bottom: 9999px;（底部边框会被父元素的overflow: hidden切割掉） 
 2. flex布局默认 
 3. 父元素设置display:table-row(当元素display设置为table-row后，再设置宽度就没有效果了，因此需要再包裹一层div，然后给它设置宽度);子元素设置table-cell
+
+:::caution
+可以用将align-items设为 flex-start,或者align-items属性的其他值，子项就会保持自身的高度了
+:::
 
 ## 网页字体变清晰，变细
 
@@ -307,10 +352,130 @@ flex布局
 两者都最好设置最小宽度
 
 > 圣杯布局:
-先写中间的div，为了中间div内容不被遮挡，将中间内容区域content设置了左右padding-left和padding-right后，让左中右都浮动，中的宽度设置为100%,然后将左边的块设置margin-left:-100%,右边的设置为-自身宽度，左右两个div用相对布局position: relative并分别配合right和left属性移动到padding出来的部分，以便左右两栏div移动后不遮挡中间div。
+先写中间的div，为了中间div内容不被遮挡，将内容区域content设置了左右padding-left和padding-right后，让左中右都浮动，中的宽度设置为100%,然后将左边的块设置margin-left:-100%,右边的设置为-自身宽度，左右两个div用相对布局position: relative并分别配合right和left属性移动到padding出来的部分，以便左右两栏div移动后不遮挡中间div。
+
+:::caution
+当有浮动时，left应该是紧靠着center的右边的，就是因为center的宽度100%，才会挤以margin-left:100%;
+就可以将left元素移到center那行的开头
+:::
+
+
+```js title="示例"
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style type="text/css">
+			.container{
+				padding-left:200px;
+				padding-right: 150px;
+			}
+			#center{
+				background-color: yellow;
+				width: 100%;
+				
+			}
+			#left{
+				position:relative;
+				right: 200px;
+				background-color: #008000;
+				width: 200px;
+				/* height: 100px; */
+				margin-left: -100%;
+				/* 当有浮动时，left应该是紧靠着center的右边的，
+				就是因为center的宽度100%，才会挤下去，所以margin-left:100%;
+				就可以将left元素移到center那行的开头*/
+			}
+			#right{
+				background-color: skyblue;
+				width: 150px;
+				margin-right: -150px;
+				/* 当设置margin-right为负值时，会减少自身的宽度，所以此时right盒子是没有宽度的 */		
+						/* 如果设置margin-left为负值，会占据center的宽度 */
+			}
+
+		
+			.float-left{
+				float: left;
+			}
+		</style>
+	</head>
+	<body>
+			<div class="container">
+		<div id="center" class="float-left">
+			center
+		</div>
+			<div id="left" class="float-left">
+				left
+			</div>
+			<div id="right" class="float-left">
+				right
+			</div>
+				</div>
+	</body>
+</html>
+```
 
 > 双飞翼布局:
-中间的部分被标签单独包裹放在上面，只有左右两个浮动，中间的设置margin出左右的位置，宽度100%，将左边块margin-left设置为-100%右边为负的自身宽度
+中间的部分(内)被标签(外)单独包裹放在上面，外左右浮动，中间的内设置margin出左右的位置，外宽度100%，将左边块margin-left设置为-100%右边为负的自身宽度
+
+```js title="示例"
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style type="text/css">
+			#center{
+				background-color: yellow;
+				width: 100%;
+				height: 100px;
+			}
+			#center #center-wrap{
+				margin: 0 150px 0 200px;
+			}
+			#left{
+
+				background-color: #008000;
+				width: 200px;
+				height: 100px;
+				margin-left: -100%;
+				
+			}
+			#right{
+				background-color: skyblue;
+				width: 150px;
+				height: 100px;
+				margin-left: -150px;
+				
+			}
+	
+			.float-left{
+				float: left;
+			}
+		</style>
+	</head>
+	<body>
+		
+		
+		<div id="center" class="float-left">
+			<div id="center-wrap">
+				center
+			</div>
+		</div>
+			<div id="left" class="float-left">
+				left
+			</div>
+			
+			<div id="right" class="float-left">
+				right
+			</div>
+	
+	
+	</body>
+</html>
+```
 
 > flex布局:
-如果是让中间的content在网页渲染的先渲染，需要把content写在第一个,因此需要给centerleftright增加一个order属性
+如果是让中间的content在网页渲染的先渲染，需要把content写在第一个,因此需要给centerleftright增加一个order属性,再用flex:1撑开中间部分就可以

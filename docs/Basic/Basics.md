@@ -243,7 +243,7 @@ audio: MP3、Wav、Ogg
 ## link和import的区别
 
 - link是html标签而@import是css提供的
-- link引入的样式页面加载时同时加载，而import引入-的样式需要等页面加载完成后再加载
+- link引入的样式页面加载时同时加载，而import引入的样式需要等页面加载完成后再加载
 - link没有兼容性问题而import不兼容ie5以下
 - link可以通过js操作dom动态引入样式而import不行
 
@@ -368,7 +368,7 @@ URI 指的是统一资源标识符，用唯一的标识来确定一个资源
 
 2.检查项目中有没有lock文件 
 
-2.1若无lock文件，则从npm远程仓库获取包信息，根据package.json构建依赖树，然后在缓存中一次查找依赖树中的每个包，若存在缓存，则将缓存按照以来结构解压到node_modules，若不存在缓存，则从npm远程仓库下载包，校验包的完整性，再将包复制到npm缓存目录，解压到node_modules后，生成lock文件。 
+2.1若无lock文件，则从npm远程仓库获取包信息，根据package.json构建依赖树，然后在缓存中一次查找依赖树中的每个包，若存在缓存，则将缓存按照依赖结构解压到node_modules，若不存在缓存，则从npm远程仓库下载包，校验包的完整性，再将包复制到npm缓存目录，解压到node_modules后，生成lock文件。 
 
 2.2若有lock文件 
 检查package.json中的依赖版本是否和package-lock.json中的依赖有冲突，若没有冲突，则跳过获取包信息，构建依赖树过程，开始在缓存中查找包信息，后续过程相同 
@@ -768,8 +768,8 @@ let result=arr.reduce(function(prev,cur,index,arr){},initialValue)
 . 一位任意字符（除回车换行外）
 {min,max} 字符集最少出现min次，最多不超过max次，{min,}最少出现min次多了不限，{n}字符集必须是n个
 ? 最多一个
-多了不限
-至少一个
+* 多了不限
++ 至少一个
 [^xxx] 除了xxx之外
 ^xxx 必须以xxx开头
 xxx$ 必须以xxx结尾
@@ -788,7 +788,7 @@ result[0]：匹配值。
 result[1],…[n]：根据正则表达式中对应捕获组，在匹配值中出现的值。
 index：匹配值中第一个字符在整个字符串中的索引。
 input：整个字符串。
-（2）re
+（2）* result
 lastIndex：下一次匹配执行起点的索引，也就是本次匹配值的最后一个字符索引+1。如果没有g修饰符，lastIndex永远是0。
 ignoreCase正则表达式中是否有i修饰符。
 global：正则表达式中是否有g修饰符。
@@ -981,6 +981,23 @@ function fn(a, b, ...args) {
 fn(1, 2, 3, 4, 5)
 ```
 
+:::caution arguments.callee
+```js
+function f(num) {
+    if (num <= 1) {
+        return 1
+    } else {
+        return num * arguments.callee(num - 1)
+        // 通过 arguments.callee 代替函数名，可以保证不会出问题
+    }
+}
+
+var a = f
+f = null
+a(4)    // 24
+```
+:::
+
 ### 回调函数
 
 把函数交给别人调用：绑定给事件的函数、放入定时器任务的函数
@@ -989,14 +1006,84 @@ fn(1, 2, 3, 4, 5)
 
 - 节约内存，在定义函数时，不使用任何变量引用的函数，创建完立即执行，执行后释放
 - 可以充当临时作用域，避免在全局创建不必要的变量
+
+```js
+(function (str){
+
+    console.log(str);
+
+})("hello!")
+```
   
 **何时使用：** 
-1. 当需要写一个js插件，并且复用率很高时
-2. 命名函数只需要使用一次 
-3. 独立模块，各个模块低耦合，减少对全局作用域的污染
+1. 事件
+   
+```js
+ obj.onclick=function(){
+    }
+```
+
+2. 对象
+
+```js
+ fn:function(){
+        return this.name
+    }
+```
+
+3. 函数表达式赋值
+
+```js
+var fn=function(){
+}
+```
+
+4. 回调函数
+
+```js
+setInterval(function(){
+},1000);
+```
+
+5. 返回值
+
+```js
+ return function(){
+    }
+```
+
+6. 块级作用域
+
+```js
+(function(){
+    //块级作用域（私有作用域）
+})();
+```
+
+7. 闭包
+
+闭包是指有权访问另一个函数作用域中的变量的函数。
+
+```js
+function c(p) {
+    retrun function(o1,o2){
+        // var v1 = o1[p]
+        // var v2 = o2[p]
+        
+        if (v1 < v2) {
+            return -1
+        } else if (v1 > v2) {
+            retrun 1
+        }else {
+            retrun 0
+        }
+    }
+}
+
+```
    
 :::caution 补充说明
-非匿名的立即执行函数：因为当 JS 解释器在遇到⾮匿名的⽴即执⾏函数时，会创建⼀个辅助的特定对象，然后将函数名称作为这个对象的属性，因此函数内部才可以访问到foo，但是这个值⼜是只读的，所以对它的赋值并不⽣效，所以打印的结果 还是这个函数，并且外部的值也没有发生更改
+*非匿名的立即执行函数：因为当 JS 解释器在遇到⾮匿名的⽴即执⾏函数时，会创建⼀个辅助的特定对象，然后将函数名称作为这个对象的属性，因此函数内部才可以访问到foo，但是这个值⼜是只读的，所以对它的赋值并不⽣效，所以打印的结果 还是这个函数，并且外部的值也没有发生更改
 :::
 
 ### 函数柯里化

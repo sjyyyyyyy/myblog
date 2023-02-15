@@ -32,27 +32,38 @@
 //     <Layout
 //       title={`Hello from ${siteConfig.title}`}
 //       description="Description will go into a meta tag in <head />">
-     
-     
-      {/* <HomepageHeader /> */}
-      {/* <main>
+
+
+{/* <HomepageHeader /> */ }
+{/* <main>
         <HomepageFeatures />
       </main> */}
-    {/* </Layout>
+{/* </Layout>
   );
 } */}
 
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import Layout from '@theme/Layout';
-// import Top from '@site/src/components/TopPart';
-// import Bottom from '@site/src/components/Bottom';
-// import Middle from '@site/src/components/Middle';
+import Top from '@site/src/components/TopPart';
+import Bottom from '@site/src/components/Bottom';
+import Middle from '@site/src/components/Middle';
 export default function Home() {
+  useEffect(() => {
+    // const sc = document.getElementById("a")
+    // sc.addEventListener('scroll', function () {
+    //   console.log(19)
+    // }, true)
+  }, [])
   return (
     <Layout title="Hello" description="Hello React Page">
-{/* <Top />
-  <Middle />
-<Bottom /> */}
+      <div style={{
+      // ,overflow:"scroll"
+      }} id='a'>
+        <Top />
+        <Middle />
+        {/* <Bottom /> */}
+      </div>
+
     </Layout>
   );
 }

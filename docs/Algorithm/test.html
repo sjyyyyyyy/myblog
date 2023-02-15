@@ -1,0 +1,41 @@
+
+<!DOCTYPE html>
+<html lang="en">
+ 
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+ 
+<body>
+  <div style="height:100px;border:1px solid #ddd;width:100px;overflow: scroll;" onscroll="divscrollFn(event)">
+      xzvczsafsa<br>
+      xzvczsafsa<br>
+      xzvczsafsa<br>
+      xzvczsafsa<br>
+      xzvczsafsa<br>
+  </div>
+  <script type="text/javascript">
+	/* 理解：
+	 
+	scrollTop为滚动条在Y轴上的滚动距离。
+	 
+	clientHeight为内容可视区域的高度。
+	 
+	scrollHeight为内容可视区域的高度加上溢出（滚动）的距离。
+	 
+	从这个三个属性的介绍就可以看出来，滚动条到底部的条件即为scrollTop + clientHeight == scrollHeight。 */
+	function divscrollFn(event){
+	  let el=event.target;
+	   if(el.scrollTop+el.clientHeight>=el.scrollHeight){
+		  console.log('到底啦');
+		  
+	   };
+	}
+	</script>
+</body>
+ 
+</html>
+

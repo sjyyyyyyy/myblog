@@ -11,8 +11,9 @@
 }
 
 .all {
-  min-height: 100vh;
-  overflow-x: hidden;
+  /* min-height: 100vh; */
+  height: 1000px;
+  overflow: scroll;
   background: linear-gradient(#2b1055,#7597de);
 }
 

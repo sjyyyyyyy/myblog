@@ -4,45 +4,58 @@ import stars_t from './images/stars.png';
 import moon_t from './images/moon.png';
 import mountain_b from './images/mountains_behind.png';
 import mountain_f from './images/mountains_front.png'
-
-
 export default function TopPart() {
-    const windowx=window?window:global
     const stars = useRef();
-    const moon=useRef();
-    const mountains_behind=useRef();
-    const text=useRef();
-    const btn=useRef();
-    const mountains_front=useRef();
-   useEffect(()=>{
-     windowx.addEventListener('scroll', function(){
-      let value = windowx.scrollY;
-     
-      stars.current.style.left = value * 0.25 + 'px'
-      moon.current.style.top = value * 1.05 + 'px'
-      mountains_behind.current.style.top = value * 0.5 + 'px'
-      mountains_front.current.style.top = value * 0 + 'px'
-      text.current.style.marginRight = value * 4 + 'px'
-      text.current.style.marginTop = value * 1.5 + 'px'
-      btn.current.style.marginTop = value * 1.5 + 'px'
+    const moon = useRef();
+    const mountains_behind = useRef();
+    const text = useRef();
+    const btn = useRef();
+    const mountains_front = useRef();
+    const all = useRef()
+ function onScroll(){
+    console.log(1)
+ }
+    useEffect(() => {
+        const scrollEle = document.getElementById("all")
+        const windowx=scrollEle
+        scrollEle.addEventListener('scroll', function(){
+           
+          let value = windowx.scrollTop;
+          stars.current.style.left = value * 0.25 + 'px'
+          moon.current.style.top = value * 1.05 + 'px'
+          mountains_behind.current.style.top = value * 0.5 + 'px'
+          mountains_front.current.style.top = value * 0 + 'px'
+          text.current.style.marginRight = value * 4 + 'px'
+          text.current.style.marginTop = value * 1.5 + 'px'
+          btn.current.style.marginTop = value * 1.5 + 'px'
+        },true)
+
+        scrollEle.addEventListener('click', function () {
+            console.log(1880)
+        })
+        // scrollEle.addEventListener('scroll', function () {
+        //     console.log("s:",scrollEle.scrollTop)
+        //     console.log("w:",window.scrollTop)
+        // })
+        // all.current.onScroll = function () {
+        //     console.log(1)
+        // }
     })
-   },[])
-  
+
     return (
-        <div className={styles.all}>
+        <div id='all' onScroll={onScroll} ref={all} className={styles.all}>
             <section className={styles.section}>
-                <img  ref={stars} src={stars_t} id="stars"/>
-                
-                    <img ref={moon} src={moon_t} className={styles.moon}/>
-                        <img ref={mountains_behind} src={mountain_b} className={mountains_behind}/>
-                            <h2 ref={text} className={styles.text}>Moon Light</h2>
-                            <a ref={btn} href="#sec" className={styles.btn}>Explore</a>
-                            <img ref={mountains_front} src={mountain_f} className={styles.mountains_front}/>
-                            </section>
-                            <div className={styles.sec} id="sec">
-                                <h2>Parallax Scrolling Effects</h2>
-                                <p>loremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremlorem</p>
-                                </div>
-                                    </div >
-                                    );
+                <img ref={stars} src={stars_t} id="stars" />
+                <img ref={moon} src={moon_t} className={styles.moon} />
+                <img ref={mountains_behind} src={mountain_b} className={mountains_behind} />
+                <h2 ref={text} className={styles.text}>Moon Light</h2>
+                <a ref={btn} href="#sec" className={styles.btn}>Explore</a>
+                <img ref={mountains_front} src={mountain_f} className={styles.mountains_front} />
+            </section>
+            <div className={styles.sec} id="sec">
+                <h2>Parallax Scrolling Effects</h2>
+                <p>loremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremlorem</p>
+            </div>
+        </div >
+    );
 }
