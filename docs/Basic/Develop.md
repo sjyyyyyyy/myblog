@@ -6,6 +6,31 @@ sidebar_position: 5
 
 实用方法
 
+## 前端工程化
+
+一些提高效率性能，提升开发体验的手段，主要从编码发布到运维的整个研发生命周期把软件工程的方法和思想引用到前端开发。编码阶段涉及: 模块化、组件化、规范化、模块打包工具、自动化。
+
+- 模块化：避免命名冲突，按需加载，复用性、可维护性更高
+
+- 组件化：提高代码复用性，在设计层面上对ui进行拆分（模块化只是在文件层面上，对代码或资源的拆分）
+  
+- 规范化：ts，eslint编码规范，严格模式，文档规范
+
+### 前端工程化流程
+
+开发阶段——打包阶段（如将vue转换为css+html+js静态形式）——打包之后的项目可以进行部署——先部署到测试环境
+
+## 前端性能指标
+
+- 白屏时间FP：输入URL开始，到页面开始有变化，只要有任意像素点变化，都算是白屏时间
+- 首次内容绘制FCP：页面上绘制了第一个元素
+- 首页时间：当onload事件触发的时候
+- 最大内容绘制LCP：记录视窗内最大的元素绘制的时间，该时间会随着页面渲染变化而变化，因为页面中的最大元素在渲染过程中可能会发生改变，另外该指标会在用户第一次交互后停止记录。
+- 首次输入延迟FID：测量用户第一次与页面交互（单击链接、点按按钮等等）到浏览器对交互作出响应，并实际能够开始处理事件处理程序所经过的时间。
+- 累计位移偏移CLS：累积布局偏移，测量视觉稳定性
+
+
+
 ## 移动端适配
 
 1. viewport适配
@@ -45,6 +70,120 @@ var clientWidth = docEl.clientWidth;//获取设备的宽度
 ```
 
 3. 媒体查询@media
+
+## 瀑布流+图片懒加载
+
+:::tip
+先创建50个img对象append进页面元素中，在页面加载完成后`window.onload`中给图片一一根据视图高度设置绝对定位的top和left，获取当前最后一排元素中距离顶部最远的元素计算距离，设置为父元素高度，绑定页面滚动事件，判断若滚动距离加浏览器页面高度若大于当前父元素高度则重新赋值total，并重新创建img元素，设置定位距离，重新赋值父元素高度，考虑页面伸缩可以加onresize事件，判断clientWidth若小于900则将num赋值为5，父元素宽度重新赋值，若大于则num为10，父元素宽度重新赋值，最终记得重新调用定位元素的函数
+:::
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body{
+            background: #999;
+        }
+        *{
+            margin: 0;
+            padding:0;
+        }
+        .all{
+            border:1px solid black;
+            background-color: #fff;
+            width: 1090px;
+            margin: auto;
+            font-size: 0;
+            position: relative;
+        }
+        .smallimg {
+            position: absolute;
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+<div class="all">
+
+</div>
+<script>
+    var img = ["1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg", "7.jpg", "8.jpg", "9.jpg", "10.jpg", "11.jpg", "12.jpg", "13.jpg", "14.jpg", "15.jpg"];
+    var all = document.getElementsByClassName("all")[0];
+    var num = 10;
+    var total = 50;
+	//初始创建50张图片
+    createEle(total);
+    window.onload = function (ev) {
+  	//给50张图片设置定位
+        setPosition(0)
+ 	//获取页面的高并赋值
+        var maxHeight = getMaxHeight(total);
+        all.style.height = maxHeight+"px";
+    }
+    function createEle(newTotal) {
+	//创建对象函数
+        for(var i=newTotal-50;i<newTotal;i++){
+            var image = document.createElement("img");
+            image.src = "img/"+img[Math.floor((Math.random()*num))];
+            image.setAttribute("class","smallimg");//image.className = "smalling"
+            all.appendChild(image);
+        }
+    }
+    window.onresize = function(){
+    //页面伸缩事件
+        if(document.documentElement.clientWidth<=900){
+            num=5;
+            all.style.width = "540px";
+        }
+        else{
+            num=10;
+            all.style.width = "1090px";
+        }
+        setPosition(0)
+    }
+
+    function setPosition(start) {
+  //设置图片定位函数
+        for(var i=start;i<all.children.length;i++){
+            console.log(all.children[i].offsetHeight+"....");
+            all.children[i].style.left = ((i%num)*110)+"px";
+            if(i>=num){
+                all.children[i].style.top = (all.children[(i-num)].offsetHeight+10+all.children[(i-num)].offsetTop)+"px";
+            }
+            else{
+                all.children[i].style.top= "0px";
+            }
+        }
+    }
+    function getMaxHeight(newTotal) {
+    //在创建完所有图片后获取all的最后十个子元素，并比较其自身高与距离顶部的高
+        var max=0
+        for(var i=newTotal-10;i<newTotal;i++){
+           var temp = all.children[i].offsetTop+all.children[i].offsetHeight
+            if(temp>max){
+                max = temp
+            }
+        }
+        console.log(max)
+        return max
+    }
+    this.addEventListener("scroll",function (evt) {
+        if(document.documentElement.clientHeight+this.scrollY>=document.body.offsetHeight-20){
+            total = total+50;
+            createEle(total);
+            setPosition(total-50)
+            all.style.height = getMaxHeight(total)+"px";
+        }
+      
+    })
+</script>
+</body>
+</html>
+
+```
 
 ## 渲染多条数据
 

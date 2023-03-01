@@ -10,30 +10,31 @@
 </head>
  
 <body>
-  <div style="height:100px;border:1px solid #ddd;width:100px;overflow: scroll;" onscroll="divscrollFn(event)">
-      xzvczsafsa<br>
-      xzvczsafsa<br>
-      xzvczsafsa<br>
-      xzvczsafsa<br>
-      xzvczsafsa<br>
-  </div>
+ 
   <script type="text/javascript">
-	/* 理解：
-	 
-	scrollTop为滚动条在Y轴上的滚动距离。
-	 
-	clientHeight为内容可视区域的高度。
-	 
-	scrollHeight为内容可视区域的高度加上溢出（滚动）的距离。
-	 
-	从这个三个属性的介绍就可以看出来，滚动条到底部的条件即为scrollTop + clientHeight == scrollHeight。 */
-	function divscrollFn(event){
-	  let el=event.target;
-	   if(el.scrollTop+el.clientHeight>=el.scrollHeight){
-		  console.log('到底啦');
-		  
-	   };
-	}
+
+function binary_search1(nums, target) {
+    var left = 0;
+    var right = nums.length-1;
+    while(left <= right) {
+        //var mid = left + parseInt((right - left) / 2);
+        var mid = Math.floor((left + right) / 2);
+        if(target == nums[mid]){
+            return mid;
+        }else if(target < nums[mid]){
+            right = mid - 1;
+        }else{
+            left = mid + 1;
+        }
+    }
+    return -1;
+}
+ 
+var arr = [1,2,3,4,5,6,7,8,9,10,11,23,44,86];
+var result = binary_search1(arr, 10);
+console.log(result); // 9 返回目标元素的索引值
+
+
 	</script>
 </body>
  

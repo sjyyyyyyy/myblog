@@ -478,16 +478,237 @@ function Print(n){
 2. 或者判断边缘后直接返回[...new Set(arr)]
 :::
 
+
+数组和相等的三部分
+
+给你一个整数数组arr，只有可以将其划分为三个和相等的 非空部分时才返回true，否则返回false。
+
+:::tip
+reduce计算数组内元素总和sum，若sum和3取余不为0则直接返回false，计算sum/3平均数avg，设置step为0，flag为0，0到len进入循环，step+=arr[i]，若flag为2，则返回true，若step等于avg则将step赋值为0，flag++，最外层返回false
+:::
+
+数组中和为0的三个元素
+
+和为0且不重复的三元组
+
+:::tip
+设置result为空数组，若arr为null或len小于3则返回result，低到高排序sort，0到len进入循环，若arr[i]大于0则break，若i大于0且arr[i]==arr[i-1]则continue，设置left为i+1，right为len-1，当left小于right时进入while循环，设置sum为arr[i]+arr[left]+arr[right]，判断若sum为0则将三个值push进result中，当left小于right且arr[left]==arr[left+1]时循环将left++，当left小于right且arr[right]==arr[right-1]时循环将right--，然后正常将left++，right--。若sum小于0，则将left++，若sum大于0，则将right--，最外层返回result
+:::
+
+数组中第三大的数
+
+先sort后reverse，从i=1，diff=1到i小于len进入循环，判断若arr[i]不等于arr[i-1]且++diff等于3则直接返回arr[i]，最外层返回arr[0]
+
+数组出现次数过半的数字
+
+:::tip
+1. 统计，遍历
+2. 摩尔投票法：在每一轮投票过程中，从数组中找出一对不同的元素，将其从数组中删除。这样不断的删除直到无法再进行投票，如果数组为空，则没有任何元素出现的次数超过该数组长度的一半。如果只存在一种元素，那么这个元素则可能为目标元素。
+
+```js
+var majorityElement = function(nums) {
+   var count = 0;
+   var num = nums[0];
+   var len = nums.length;
+   for(let i = 1; i < len; i ++){
+       if(num != nums[i]){
+           count--;
+           if(count<0){
+               count = 0;
+               num = nums[i];
+           }
+       }else{
+           count ++;
+       }
+   }
+   return num;
+};
+```
+:::
+
+合并有序数组
+
+A，B
+
+:::tip
+设置arr为长度为两者长度之和(m+n)的新数组，设置i为0，p1为0，p2为0，当p1小于m且p2小于n时进入while循环，arr[i++]赋值为`A[p1]<B[p2]?A[p1++]:B[p2++]`，当p1小于m时进入while循环，arr[i++]赋值为A[p1++]，当p2小于n时进入循环，arr[i++]赋值为B[p2++]，最外层返回arr
+:::
+
+数组的所有0移动到末尾
+
+:::tip
+设置left为0，right为0，当right小于len时进入while循环，判断当arr[right]不为0时交换arr[left]和arr[right]，并将left++，此外层将right++
+:::
+
+连续子数组的最大和
+
+:::tip
+设置temp为0，result为arr[0]，0到len遍历数组，temp赋值为`=Math.max(arr[i],temp+arr[i])`，result赋值为`Math.max(temp,result)`，最外层返回result
+:::
+
+数组中三个数最大乘积
+
+:::tip
+判断边缘，先对数组进行排序，设置result为arr[len-1]，若result小于0（全负序列），判断arr[len-2]*arr[len-3]是否小于arr[0]*arr[1]，若小于则将temp设置为arr[len-2]*arr[len-3]，否则将temp设置为nums[0] * nums[1]，然后将result值更新为result*temp，若不是全负序列，判断arr[len-2]*arr[len-3]是否大于arr[0]*arr[1]，若大于则将temp设置为arr[len-2]*arr[len-3]，否则将temp设置为nums[0] * nums[1]，然后将result值更新为result*temp，最外层返回result
+```js title="优化排序找最大三个和最小两个"
+var maximumProduct = function(nums) {
+    const len = nums.length;
+    if (len === 3) {
+        return nums[0]*nums[1]*nums[2];
+    }
+    let min1=1001, min2=1001;
+    let max1=-1001, max2=-1001, max3=-1001;
+    for(let i = 0; i < len; i++) {
+        if (nums[i] < min1) {
+            min2 = min1;
+            min1 = nums[i];
+        } else if (nums[i] < min2) {
+            min2 = nums[i];
+        }
+        if (nums[i] > max1) {
+            max3 = max2;
+            max2 = max1;
+            max1 = nums[i];
+        } else if (nums[i] > max2) {
+            max3 = max2;
+            max2 = nums[i];
+        } else if (nums[i] > max3) {
+            max3 = nums[i];
+        }
+    }
+    return Math.max(max1*max2*max3, max1*min2*min1);
+};
+```
+:::
+
+
+旋转数组最小数字
+
+:::tip
+设置left为0，right为len-1，当left小于right时进入while循环，设置mid为(left+right)>>>1，判断若arr[mid]大于arr[right]则将left赋值为mid+1，若arr[mid]小于arr[right]则将right赋值为mid，否则right--，最外层返回arr[left]
+:::
+
+旋转数组找target
+
+升序排列，不重复
+
+:::tip
+先判断边缘，声明start为0，end为len-1，声明mid。当start小于等于end时进入while循环，mid赋值为start加`((end-start)>>>1)`，若arr[mid]等于target，则返回mid，若arr[start]小于等于arr[mid]（若旋转点在右侧，左侧正常升序排列）则继续判断若target在arr[start]和arr[mid]之间则将end赋值为mid-1，否则将start赋值为mid+1，若旋转点在左侧，右侧正常升序(else状况)，则继续判断若target在arr[mid]和arr[end]之间，则start赋值为mid+1，否则end赋值为mid-1，最外层返回-1
+:::
+
 数组扁平化
 
 :::tip
 先判断边缘，声明result空数组，arr.reduce遍历，返回pre.concat内容为判断当前item是否为数组，是则递归调用传入item，不是数组则直接为item，初始值传入空数组，将reduce结果赋值给result，最终返回result
 :::
 
+数组第k大元素
+
+arr,k
+
+:::tip
+判断边缘，记录第k大的索引位置arr.length-k，调用quickSort(arr,0,arr.length-1)，最终return arr[k]
+- quickSort(arr,start,end)：若start大于等于end则直接return，设置temp为arr[start]，设置i为start，j为end，若i小于j进入循环，循环内若i小于j且temp小于等于arr[j]则进入循环j--，循环外将arr[i]赋值为arr[j]，当i小于j且temp大于等于arr[i]时进入循环将i++，循环外将arr[j]赋值为arr[i]，外部循环外将temp赋值给arr[i]，判断当前i是否等于k，若等于则return，若i大于k则递归quickSort(arr,start,i-1)，否则递归进入(arr,i+1,end)
+:::
+
+数组中最小k个数
+
+给定一个长度为n的可能有重复值的数组，找出其中不去重的最小的 k 个数。
+
+:::tip
+判断边缘，设置left为0，right为len-1，设置index为partition(arr,left,right)，当index不等于k时进入while循环，若index小于k则left赋值为index+1，index为partition(arr,left,right)，若index大于k则right等于index-1，index为partition(arr,left,right)，最终返回arr.slice(0,k)
+```js
+function partition(array, start, end) {
+
+  let pivot = array[start]; // 取第一个值为枢纽值，获取枢纽值的大小
+
+
+  // 当 start 等于 end 指针时结束循环
+  while (start < end) {
+
+    // 当 end 指针指向的值大等于枢纽值时，end 指针向前移动
+    while (array[end] >= pivot && start < end) {
+      end--;
+    }
+
+    // 将比枢纽值小的值交换到 start 位置
+    array[start] = array[end];
+
+    // 移动 start 值，当 start 指针指向的值小于枢纽值时，start 指针向后移动
+    while (array[start] < pivot && start < end) {
+      start++;
+    }
+
+    // 将比枢纽值大的值交换到 end 位置，进入下一次循环
+    array[end] = array[start];
+  }
+
+  // 将枢纽值交换到中间点
+  array[start] = pivot;
+
+  // 返回中间索引值
+  return start;}
+```
+:::
+
+二维数组查找指定数
+
+每行递增
+
+matrix，target
+
+:::tip
+判断边缘，设置height为matrix.length，width为matrix[0].length，返回helper(0,width-1)
+
+- helper(x,y):若x等于height或y小于0，则返回false，若matrix[x][y]等于target则返回true，若小于target则返回helper(x+1，y)，否则往左走返回helper(x，y-1)
+:::
+
 字符串数组的最长公共前缀
 
 :::tip
 判断边缘，0到str[0].length遍历(i)，记录当前字符`const char =strs[0].charAt(i)`，从1到str.length遍历(j)若i等于str[j].length或者str[j].charAt(i)不等于char则证明公共前缀到i-1为止，返回`str[0].substring(0,i)`，最外层返回str[0]
+:::
+
+数组中和为target的两个数
+
+:::tip
+判断边缘，声明map为new Map()，0到len进入循环，声明result为target-arr[i]，若map中存在result，则直接返回[map.get(result),i]，若不存在result则`map.set(arr[i],i)`
+:::
+
+删除有序数组中的重复项
+
+给定一个升序数组，请原地删除重复的元素，使每个元素只出现一次，返回删除后数组的新长度
+
+:::tip
+判断边缘，设置fast为1，slow为1，当fast小于len时进入while循环，判断若arr[fast]不等于arr[fast-1]则将arr[slow]赋值为arr[fast]，并将slow++，在循环外层将fast++，最外层返回slow
+:::
+
+找出数组中任意一个重复的数字
+
+:::tip
+设置obj为空对象，result为null，0到len进入循环，设置temp为arr[i]，并判断若对象中有此值obj[temp]则将result赋值为temp并break，若没有此值则将obj[temp]赋值为1，最终返回result
+:::
+
+数组搜索插入位置
+
+给定一个排序数组和一个目标值，在数组中找到目标值，并返回其索引。如果目标值不存在于数组中，返回它将会被按顺序插入的位置。
+
+:::tip
+设置left为0，right为len-1，result为len，当left小于等于right时进入循环，设置mid为`((right-left)>>1)+left`，若target小于等于arr[mid]，则result等于mid，让right等于mid-1，否则让left等于mid+1，最终返回result
+:::
+
+调整数组顺序使奇数位于数组前半部分
+
+:::tip
+设置left为0，right为len-1，当left小于right时进入while循环，判断若arr[left]为偶数且arr[right]为奇数时调换两者位置，退出判断后继续判断若arr[left]为奇数则left++，若arr[right]为偶数则right--，最终返回arr
+:::
+
+合并重叠区间
+
+:::tip
+判断边缘，并按首位大小给数组sort排序`(a,b)=>{
+return a[0]-b[0];
+}`，声明result空数组，设置temp为arr[0]，forof遍历arr，判断若item[0]小于等于temp[1]可合并，则temp重新赋值为`[tmp[0],Math.max(interval[1],tmp[1])]`否则不能合并，将result中push进合并后的值`[].concat(temp)`,并将temp重新赋值为item，循环结束后记得把最后一个temp push进result中，再返回result
 :::
 
 数组最大数
@@ -667,6 +888,15 @@ class Node{
 }
 ```
 
+#### 二叉树所有路径
+
+root
+
+:::tip
+声明result为空数组，调用paths函数传入(root，"")，最终返回result
+- paths(root，path):判断若root存在则将path+=root.val.toString()，继续判断若当前节点为叶子节点则将path值push进result，若非叶子节点则path += "->"，继续递归paths(root.left,path)，paths(root.right,path)
+:::
+
 #### 二叉树层序遍历
 
 :::tip 
@@ -687,6 +917,14 @@ root,p,q
 判断若root不存在则返回null，若root等于p则返回p，root等于q则返回q，设置x为递归调用此函数传入root.left，p，q，y为递归调用此函数传入right...，判断若x&&y都存在则返回root，否则返回x||y
 :::
 
+#### 二叉树的右视图
+
+root
+
+:::tip
+判断边缘，声明result空数组，queue为[root]，声明now，len，当queue长度不为0时进入while循环，设置len为queue.length,设置now为空数组，0到len进入循环，声明nowVal为`queue.shift()`，并将nowVal.val值push进now中，判断若nowVal.left存在，则将其push进queue中，nowVal同理，在此循环外将now[now.length-1]值push进result中，最外层返回result
+:::
+
 #### 判断二叉树是否相同
 
 :::tip
@@ -697,6 +935,35 @@ root,p,q
 
 :::tip
 递归，先判断边缘根节点是否为null，return新compare函数传入当前根左右节点为参数，compare函数内判断：节点同时为null为true，不同时为null为false，节点值不相等为false，最终return ` compare(node1.left,node2.right)&&compare(node1.right,node2.left)`
+:::
+
+#### 二叉树最小深度
+
+:::tip
+minDepth()：判断若root为null则返回0，若root为叶子结点则返回1，声明result为`Number.Max_SAFE_INTEGER`，判断若root.left存在则将result赋值为`Math.min(minDepth(root.left),result)`，判断若root.right存在则将result赋值为`Math.min(minDepth(root.right),result)`，最终返回result+1
+:::
+
+#### 二叉树直径
+
+一棵二叉树的直径长度是任意两个结点路径长度中的最大值。这条路径可能穿过也可能不穿过根结点。
+
+:::tip
+设置result为0，调用dfs(root)，并返回result
+- dfs(root):判断若root为null则返回0，设置leftMax为dfs(root.left)，rightMax为dfs(root.right)，result为`Math.max(result,leftMax+rightMax)`，最终返回`Math.max(leftMax,rightMax)+1`
+:::
+
+#### 合并二叉树
+
+t1,t2
+
+:::tip
+若t1，t2都存在，则t1.val为`t1.val+t2.val`，t1.left为递归调用传入(t1.left,t2.left)，right同理，最外层返回`t1||t2`
+:::
+
+#### 二叉树镜像翻转
+
+:::tip
+判断若root不存在则返回null，设置root.mid为root.left，root.left为root.right，root.right为root.mid，递归调用传入root.left,再次调用传入root.right，最终返回root
 :::
 
 #### 二叉树最大深度
@@ -793,6 +1060,42 @@ if (newNode.value < node.value) {
    设置两个空数组stack1，stack2，node为null，先将this.root根节点push进stack1中，当stack1.length大于0时进入while循环，设置node为当前pop值，将node节点push进stack2中，判断若node.left存在，则将node.left节点push进stack1中，若node.right存在，则将node.right节点push进stack2中，最终当stack2.length大于0时候，一个一个pop出来，依次执行show
 :::
 
+#### 二叉搜索树节点最小距离
+
+给定一个二叉搜索树的根节点root，返回树中任意两不同节点值之间的最小差值，其数值等于两值之差的绝对值
+
+:::tip
+设置result为`Number.Max_SAFE_INTEGER`，pre为-1，调用dfs(root)，最终返回result
+- dfs(root)：判断若root等于null则直接返回，递归调用dfs(root.left)，若pre等于-1，则将pre赋值为root.val，否则将result赋值为`Math.min(result,root.val-pre)`，并将pre赋值为root.val，最外层递归调用dfs(root.right)
+:::
+
+#### 二叉搜索树搜索指定值子树
+
+root,val
+
+:::tip
+- searchBST()：判断若root不存在则返回null，若val等于root.val则返回root，最终返回`searchBST(val<root.val?root.left:root.right,val)`
+:::
+
+#### 二叉搜索树众数
+
+给定一个含重复值的二叉搜索树的根节点root，找出并返回BST中的所有众数，若不只有一个众数，可以按任意顺序返回
+
+:::tip
+设置base为0，countWie0，maxCount为0，result为空数组，调用dfs(root)，最终返回result
+- dfs(root)：判断若root不存在则直接return，调用dfs(root.left)，update(root.val)，dfs(root.right)
+- update(val)：判断若val等于base则将count++，否则设置count为1，base为val，判断若count等于maxCount则将base值push进result中，若count大于maxCount则将maxCount赋值为count，并将result覆盖为[base]。
+:::
+
+#### 二叉搜索树第k大节点
+
+root，k
+
+:::tip
+声明result，中序遍历的倒序，右中左，可以得到递减数组，调用inorder函数传入root，最终return result
+- inorder(root):若root不存在return null，递归inorder(root.right)，k--，判断若k为0则将result赋值为root.val，递归inorder(root.left)
+:::
+
 #### 寻找最大最小节点值
 
 :::tip 最小值
@@ -865,6 +1168,73 @@ class Node {
 :::tip
 传入head，判断边缘，设置pre为null，current为head，next为null，当current存在时进入while循环，首先将current.next赋值为next当做下次操作的值，然后将pre赋值给current.next颠倒，再将pre设置为current当做下个操作值的前，最后讲过next赋值给current，最外层返回pre
 :::
+
+#### 指定范围反转链表
+
+给定单链表的头指针head和两个整数left和right，其中left<=right，反转位置left到位置right的链表节点，返回反转后的链表
+
+:::tip
+设置dummyNode创建新listNode传入-1，设置dummyNode.next为head，设置pre为dummyNode，0到left-1进入循环，pre设置为pre.next（将pre位置调到left-1位置），设置rightNode为pre（准备记录右侧切割位置），0到right-left+1进入循环，rightNode设置为rightNode.next（将rightNode调到right位置），设置leftNode为pre.next，curr为rightNode.next（存储起来等待反转并拼接），然后将pre.next置空，将rightNode.next置空。调用反转函数传入leftNode
+
+- leftNode(head)：设置pre为null，cur为head，当cur存在时进入while循环，设置next为cur.next，设置cur.next为pre，设置pre为cur，设置cur为next
+:::
+
+#### 两链表公共结点
+
+:::tip
+1. 判断边缘，设置p1，p2分别等于head1，head2，当p1不等于p2时进入while循环，判断p1是否等于null，若等于null则将p1赋值为head2，若不等于则将p1赋值为p1.next，判断若p2等于null则将p2赋值为head1，若不等于null则将p2赋值为p2.next，最外层返回p1
+2. 遍历head1用set存储，然后遍历head2判断set中有则返回
+:::
+
+#### 删除有序链表重复元素
+
+:::tip
+设置current为head，当current存在时进入while循环，判断若current.next存在且current.val等于next的val则继续判断若current.next.next存在则将其覆盖，若不存在则将current.next赋值为null，若值不相等或next不存在则继续遍历current为current.next，最外层返回head
+:::
+
+#### 合并链表
+
+输入两个递增的链表，合并这两个链表并使新链表中的节点仍然是递增排序的。
+
+:::tip
+判断若p1不存在则返回p2，若p2不存在则返回p1，判断若p1.val小于等于p2.val则将p1.next赋值为递归调用传入(p1.next,p2)，然后返回p1，若p1.val大于p2.val则将p2.next赋值为递归调用传入(p2.next,p1)，然后返回p2
+:::
+
+#### 链表中间节点
+
+给定一个头结点为head的非空单链表，返回链表的中间结点。如果有两个中间结点，则返回第二个中间结点。
+
+:::tip
+设置arr初始为[head]，当arr[arr.length-1].next不为null时进入while循环，将arr中push进arr[arr.length-1].next，最终返回arr[Math.truc(arr.length/2)]
+- Math.trunc() 方法会将数字的小数部分去掉，只保留整数部分。
+:::
+
+#### 删除链表倒数第n个节点
+
+head,n
+
+:::tip
+设置result为head，index为0，temp为null，当head存在时进入while循环，index++，判断若index等于n+1，则将temp赋值为result，若index大于n+1则将temp赋值为temp.next，循环最外层将head赋值为head.next，退出循环后，判断若index小于n则直接返回result，若index等于n则返回result.next，若index大于n则将temp.next赋值为temp.next.next，然后返回result
+:::
+
+#### 链表倒数第k个结点
+
+输入一个长度为n的链表，返回该链表中倒数第k个节点，如果该链表长度小于k，请返回一个长度为0的链表。
+
+:::tip
+设置head.next为pHead，设置arr为空数组，当head.next存在时进入while循环，向arr中push进head，head赋值为head.next退出循环后判断若arr长度大于等于k则返回arr[arr.length-k].next，否则返回null
+:::
+
+#### 单链表重新排列
+
+给定一个单链表 L 的头节点 head ，单链表 L 表示为：L0 → L1 → … → Ln - 1 → Ln 
+请将其重新排列后变为：L0 → Ln → L1 → Ln - 1 → L2 → Ln - 2 → …
+
+:::tip
+设置p为head，判断边缘，设置p.prev为null，当p.next存在时进入while循环，设置p.next.prev为p，p为p.next，退出循环后设置h为head，设置pp为p，whiletrue进入循环，若pp等于h则将h.next设置为null，并break，退出判断后声明next为h.next，将h.next设置为pp，将h设置为next，判断若pp等于h则将pp.next赋值为null，并break，退出判断后，将pp.next赋值为h，pp赋值为pp.prev
+:::
+
+
 
 ## 排序
 
@@ -1034,6 +1404,77 @@ function radixSort(array) {
 :::
 
 ## 常见问题
+
+### 网格岛屿
+
+给定一个由1陆地和0水组成的二维网络，请你计算网格中岛屿的数量，岛屿总是被水包围，并且每座岛屿只能由水平方向和竖直方向上相邻的陆地连接而成
+
+:::tip
+设置result为0，从0到grid.length遍历，内部0到grid[0].length遍历，判断若grid[i][j]等于1则将result++，并调用dfs(i,j)，然后返回result
+- dfs(row,col)：判断若row小于0或row大于等于gridlen或col小于0或col大于等于gird[0]len或grid[row][col]等于0，直接返回，退出判断后将grid[row][col]赋值为0，调用dfs(row-1,col)，dfs(row+1,col)，dfs(row,col-1)，dfs(row,col+1)
+:::
+
+### 矩阵顺时针螺旋
+
+matrix
+
+:::tip
+1. 判断边缘，设置rows为matrix.length，columns为matrix[0].length，设置visited为`new Array(rows).fill(0).map(()=>{
+return new Array(columns).fill(false);
+})`，设置total为row*columns，设置result为长度为total的空数组fill(0)，设置directionIndex为0，row为0，col为0，directions数组设置为`[[0,1],[1,0],[0,-1],[-1,0]]`，0到total进入循环，设置result[i]为matirx[row][col]且将visited[row][col]设置为true，设置nextRow为`row+directions[directionIndex][0]`，nextCol为`col+directions[directionIndex][1]`，判断边界更换directionIndex若`!(nextRow>=0&&nextRow<rows&&nextColumn>=0&&nextColumn<columns&&!(visited[nextRow][nextColumn]))`更新directionIndex为`(directionIndex+1)%4`，将row+=`=directions[directionIndex][0]`，将col+=`directions[directionIndex][1]`最外层返回result
+2. const directions=[[1,0],[0,1],[-1,0],[0,-1]]则为逆时针
+:::
+
+### 接雨水
+
+height
+
+:::tip
+设置result为0，0到len遍历，设置leftMax为0，rightMax为0，从i-1到等于0遍历(j)，设置leftMax为`(height[j]>=leftMax)?height[j]:leftMax`，同理从i+1到len遍历，获取rightMax为`(height[k]>=rightMax)?height[k]:rightMax`，设置min为leftMax和rightMax最小值，判断若min大于height[i]，则result+=min-height[i]，最外层返回result
+:::
+
+### 二分查找
+
+```md
+假设数组中共有n个元素，那么查找过程为：
+第1次折半： 还剩 n/2 个元素
+第2次折半： 还剩 n/4 个元素
+第3次折半： 还剩 n/8 个元素
+…
+第k次折半： 还剩 n/2k 个元素
+最坏的情况下，最后还剩一个元素，令 n/2k=1，则得k=logn
+那么这个T(n)，小于等于且接近于函数fn=logn，时间复杂度为O()=O(logn)
+```
+
+返回target在数组中索引值
+
+:::tip
+1. 递归：输出search(arr,target,0,arr.length)
+- search(arr,target,mix,max)：判断若min大于max则返回-1，设置mid为parseInt((min+max)/2)，判断target若等于arr[mid]则返回mid，若target大于mid则在右边，min=mid+1，返回递归调用传入(arr,target,min,max)，否则则在左边，max=mid-1，返回递归调用(arr,target,min,max)，否则返回-1
+2. 非递归(arr,target)：设置left为0，right为arr.length-1，当left小于等于right时进入while循环，设置mid为`Math.floor((left + right) / 2)`，判断若target等于arr[mid]则返回mid，若target小于arr[mid]则将right赋值为mid-1，否则将left赋值为mid+1，最外层返回-1
+:::
+
+### 动态规划
+
+自底向上分解子问题，通过变量存储已经计算过的值
+
+#### 斐波那契
+
+n
+
+:::tip
+创建数组arr为`new Array(n+1).fill(null)`，将0和1项设置为0,1。从2到等于n进入循环，arr[i]=arr[i-1]+arr[i-2]，最终返回arr[n]
+:::
+
+#### 01背包问题
+
+该问题可以描述为：给定⼀组物品，每种物品都有⾃⼰的重量和价格，在限定 的总重量内，我们如何选择，才能使得物品的总价格最高。每个物品只能放入至多⼀次。
+
+w，arrw，arrv
+
+:::tip
+设置n为arrw长度-1，设置空二维数组为result，只有一个物品时：从0到等于w进入循环，若arrw[0]大于i(装不进去)，则将result[0][i]赋值为0，若arrw[0]小于等于i，则将result[0][i]赋值为arrv[0]，有多个物品时：0到等于w进入循环(j)，内层1到等于n进入循环(i)，若result[i]不存在则将其赋值为空数组，若arrw[i]大于j(装不进去)，则result[i][j]设置为result[i-1][j]，若能装进去则将result[i][j]赋值为` Math.max(result[i-1][j], result[i-1][j-arrw[i]]+arrv[i])`，最外层输出result[n][w]
+:::
 
 ### 按字母顺序排序
 
@@ -1585,6 +2026,18 @@ RGBToHex('rgb(255,255,255)')      // '#ffffff'
 
 5. `n&(n-1)`，如果为0，说明n是2的整数幂
 
+查找只出现一次的数字
+
+:::tip
+设置ans为0，forof遍历arr，`ans^=item`，最外层返回ans
+:::
+
+两数位运算求和
+
+:::tip
+sum(a,b)：判断若a为0则返回b，b为0则返回a，声明newA为a^b，newB为(a&b)<<1，返回sum(newA,newB)
+:::
+
 计算2的n次方
 
 :::tip
@@ -1702,6 +2155,24 @@ class Queue {
 3. getHeader：`return this.queue[0]`
 4. getLength：`return this.queue.length`
 5. isEmpty：`return this.getLength()===0`
+:::
+
+### 两个栈实现队列
+
+:::tip
+设置stack1和stack2位空数组
+- push(node)：将node push进stack1中
+- pop()：判断若stack2长度为0，则在stack1长度不为0的情况下进入while循环，将stack2中push进stack1.pop()值，最外层返回stack2.pop()
+:::
+
+### 实现包含min函数的栈
+
+:::tip
+设置stack为空数组，stackMin为空数组
+- push(node)：判断若stack长度为0则将node push进stackMin中，若stack长度不为零则判断若node小于等于stackMin末尾的值则将node push到stackMin中，否则重复将stackMin中push进stackMin末尾值，最外层将node push进stack
+- pop()：判断若stack长度为0则返回null，否则将stackMin.pop()，并返回stack.pop()
+- top()：判断若stack长度为0则返回null，否则返回stack末尾值
+- min()：返回stackMin末尾值
 :::
 
 ### 实现Sample
