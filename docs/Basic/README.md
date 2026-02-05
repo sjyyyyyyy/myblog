@@ -62,3 +62,7 @@
     ```javascript
     Object.prototype.toString.call([]); // 返回 "[object Array]"
     ```
+
+---
+
+请提供您想要整理的对话内容。一旦您提供了对话内容，我将按照您指定的结构（核心结论、关键概念、适用场景、常见误区、示例）将其整理成 Markdown 文档。
